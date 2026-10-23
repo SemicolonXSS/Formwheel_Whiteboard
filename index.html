@@ -48,7 +48,7 @@ unsubs.push(onValue(ref(db,root+'/presence'),s=>{const users=Object.values(s.val
 unsubs.push(onValue(ref(db,root+'/meta/owner'),s=>{owner=s.val();enabled(!!room)}));
 $('roomDisplay').textContent='방 코드: '+code;$('roomCode').value=code;$('share').textContent=location.origin+location.pathname+'?room='+encodeURIComponent(code);enabled(true);$('status').textContent='🟢 '+code+' 방에 연결됨';notify('친구에게 초대 링크를 보내 보세요!');
 }catch(e){await leave();notify('방 참가 실패: '+e.message);$('status').textContent='연결 실패'}}
-async function createBoard(){{if(!uid){notify('로그인 중입니다.');return}const code=Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x%32]).join('');try{const r=await runTransaction(ref(db,BASE+'/'+code+'/meta'),current=>current===null?{owner:uid,createdAt:Date.now()}:undefined,{applyLocally:false});if(!r.committed)throw Error('방 코드 중복, 다시 눌러 주세요');await enter(code)}catch(e){notify('방 생성 실패: '+e.message)}}
+async function createBoard(){if(!uid){notify('로그인 중입니다.');return}const code=Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x%32]).join('');try{const r=await runTransaction(ref(db,BASE+'/'+code+'/meta'),current=>current===null?{owner:uid,createdAt:Date.now()}:undefined,{applyLocally:false});if(!r.committed)throw Error('방 코드 중복, 다시 눌러 주세요');await enter(code)}catch(e){notify('방 생성 실패: '+e.message)}}
 $('create').onclick=createBoard;$('railCreate').onclick=createBoard;
 $('join').onclick=()=>enter($('roomCode').value);
 $('roomCode').onkeydown=e=>{if(e.key==='Enter')$('join').click()};
