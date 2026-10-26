@@ -18,13 +18,6 @@
 <h2>🖌 도구</h2><div class="tools" id="tools"><button data-tool="pen" class="selected">✏️ 펜</button><button data-tool="eraser">🧽 지우개</button><button data-tool="line">📏 직선</button><button data-tool="rect">▭ 사각형</button><button data-tool="ellipse">◯ 타원</button></div>
 <label>색상 <input id="color" type="color" value="#6554df"></label><label>굵기 <b id="widthValue">6</b>px</label><input id="width" type="range" min="1" max="50" value="6">
 <label class="toggle"><input id="fill" type="checkbox"> 도형 채우기</label>
-<section id="botPanel" class="stack" aria-label="그림 봇" style="padding:12px;border:1px solid var(--border);border-radius:12px;background:#161c32">
-<strong>🤖 그림 봇</strong>
-<label>봇 스타일 <select id="botStyle" style="width:100%;margin-top:5px;background:#303958;color:#fff;border:1px solid var(--border);border-radius:8px;padding:8px"><option value="shapes">랜덤 도형</option><option value="stars">별과 반짝임</option><option value="garden">꽃과 정원</option></select></label>
-<div class="row"><button id="botStart" type="button" class="primary">▶ 봇 시작</button><button id="botStop" type="button" disabled>■ 봇 중지</button></div>
-<div class="status" id="botStatus" role="status" aria-live="polite">대기 중 · 방 입장 후 사용 가능</div>
-<p class="help" style="margin:0">봇은 4초마다 작은 그림을 추가해요. 시작한 사람의 기기에서만 작동하며, 방을 나가면 자동으로 멈춰요.</p>
-</section>
 <p class="help">왼쪽 사이드바에서 여러 보드를 만들고 클릭해 전환할 수 있어요. Shift+클릭하면 새 탭으로 열립니다. 코드를 아는 친구를 초대할 수도 있어요. 그림은 같은 방의 모든 참가자에게 실시간으로 표시됩니다.</p></aside>
 <main class="panel"><div class="boardTop"><button id="undo" disabled>↶ 내 마지막 그림 취소</button><button id="clear" disabled>🗑 전체 지우기</button><span class="spacer"></span><button id="download">⬇ PNG 저장</button></div>
 <div class="boardWrap"><canvas id="board" width="1200" height="750" aria-label="공동 그림판"></canvas></div><p id="notice" role="status"></p><p class="help">마우스와 터치를 지원합니다. 방 안에서는 모든 사람이 그림을 그리고 지울 수 있어요. 전체 지우기는 방장만 가능합니다. 익명 로그인은 그림 동기화를 위한 인증이며 Firebase 설정에 따라 추가 권한 규칙이 필요합니다.</p></main></div>
@@ -42,56 +35,13 @@ function renderRail(){const rail=$('boardRailList');rail.replaceChildren();saved
 let uid=null,room=null,owner=null,tool='pen',drawing=false,points=[],start=null,active=[],actions=new Map(),unsubs=[],myKeys=[],preview=null;
 ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);
 function notify(msg){$('notice').textContent=msg}
-function enabled(v){if(botTimer===null)$('botStart').disabled=!v;$('openTab').disabled=!v;$('undo').disabled=!v;$('copy').disabled=!v;$('leave').disabled=!v;$('clear').disabled=!v||uid!==owner}
-// Optional local drawing bot. Uses existing action writes, so existing room rules still apply.
-let botTimer=null,botBusy=false;
-const botPalette=['#6554df','#eb6a73','#2a9d8f','#f2aa37','#4386cd','#9a65c9'];
-const botRand=(lo,hi)=>Math.round(lo+Math.random()*(hi-lo));
-function stopBot(message='봇이 중지됐어요.'){
-  if(botTimer!==null)clearInterval(botTimer);
-  botTimer=null;botBusy=false;
-  $('botStart').disabled=!room||!uid;
-  $('botStop').disabled=true;
-  $('botStatus').textContent=message;
-}
-function botAction(){
-  const x=botRand(75,1125),y=botRand(65,680),size=botRand(18,70);
-  const c=botPalette[botRand(0,botPalette.length-1)];
-  const shape=(tool,pts,fill=false,width=botRand(2,7))=>({uid,tool,color:c,width,fill,points:pts,createdAt:Date.now(),bot:true});
-  const style=$('botStyle').value;
-  if(style==='stars'){
-    const p=[];for(let i=0;i<=10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?size*.43:size;p.push([Math.round(x+Math.cos(a)*r),Math.round(y+Math.sin(a)*r)])}
-    return shape('pen',p,false,3);
-  }
-  if(style==='garden'){
-    if(Math.random()<.4)return shape('line',[[x,y],[x,y+size*2]],false,4);
-    return shape('ellipse',[[x-size/2,y-size/2],[x+size/2,y+size/2]],true,2);
-  }
-  const kind=['rect','ellipse','line'][botRand(0,2)];
-  return shape(kind,[[x-size,y-size],[x+size,y+size]],kind!=='line'&&Math.random()<.35);
-}
-async function botTick(){
-  if(botBusy||!room||!uid){if(!room||!uid)stopBot('방 연결이 끊겨 봇을 중지했어요.');return}
-  botBusy=true;const currentRoom=room;
-  try{await push(ref(db,BASE+'/'+currentRoom+'/actions'),botAction())}
-  catch(e){stopBot('봇 그림 저장 실패: '+e.message)}
-  finally{botBusy=false}
-}
-$('botStart').onclick=()=>{
-  if(!room||!uid){notify('먼저 보드 방에 입장해 주세요.');return}
-  if(botTimer!==null)return;
-  $('botStart').disabled=true;$('botStop').disabled=false;
-  $('botStatus').textContent='🤖 그림 봇 작동 중 (4초 간격)';
-  botTimer=setInterval(botTick,4000);
-  botTick();
-};
-$('botStop').onclick=()=>stopBot();
+function enabled(v){$('openTab').disabled=!v;$('undo').disabled=!v;$('copy').disabled=!v;$('leave').disabled=!v;$('clear').disabled=!v||uid!==owner}
 function paintAction(a){if(!a||!Array.isArray(a.points)||!a.points.length)return;const p=a.points,c=a.color||'#111111',w=Math.max(1,Math.min(50,Number(a.width)||5));ctx.save();ctx.lineWidth=w;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=a.tool==='eraser'?'#ffffff':c;ctx.fillStyle=a.tool==='eraser'?'#ffffff':c;ctx.beginPath();if(a.tool==='pen'||a.tool==='eraser'){ctx.moveTo(p[0][0],p[0][1]);if(p.length===1){ctx.arc(p[0][0],p[0][1],w/2,0,Math.PI*2);ctx.fill()}else{for(let i=1;i<p.length;i++)ctx.lineTo(p[i][0],p[i][1]);ctx.stroke()}}else if(p.length>=2){const [x,y]=p[0], [X,Y]=p[1];if(a.tool==='line'){ctx.moveTo(x,y);ctx.lineTo(X,Y);ctx.stroke()}else if(a.tool==='rect'){a.fill?ctx.fillRect(Math.min(x,X),Math.min(y,Y),Math.abs(X-x),Math.abs(Y-y)):ctx.strokeRect(Math.min(x,X),Math.min(y,Y),Math.abs(X-x),Math.abs(Y-y))}else if(a.tool==='ellipse'){ctx.ellipse((x+X)/2,(y+Y)/2,Math.max(.01,Math.abs(X-x)/2),Math.max(.01,Math.abs(Y-y)/2),0,0,Math.PI*2);a.fill?ctx.fill():ctx.stroke()}}ctx.restore()}
 function repaint(){ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);for(const a of actions.values())paintAction(a);if(preview)paintAction(preview)}
 function at(e){const r=canvas.getBoundingClientRect();return [Math.round(Math.max(0,Math.min(canvas.width,(e.clientX-r.left)*canvas.width/r.width))),Math.round(Math.max(0,Math.min(canvas.height,(e.clientY-r.top)*canvas.height/r.height)))]}
 function action(p){return {uid,tool,color:$('color').value,width:Number($('width').value),fill:$('fill').checked,points:p,createdAt:Date.now()}}
 function off(){unsubs.forEach(fn=>fn());unsubs=[]}
-async function leave(){stopBot('봇 대기 중 · 방에 입장하면 시작할 수 있어요.');const prev=room;drawing=false;points=[];off();room=null;owner=null;actions.clear();myKeys=[];preview=null;repaint();enabled(false);renderRail();$('roomDisplay').textContent='방에 참가하지 않았어요';$('participants').textContent='—';$('share').textContent='';if(prev&&uid)try{await remove(ref(db,BASE+'/'+prev+'/presence/'+uid))}catch(e){}}
+async function leave(){const prev=room;drawing=false;points=[];off();room=null;owner=null;actions.clear();myKeys=[];preview=null;repaint();enabled(false);renderRail();$('roomDisplay').textContent='방에 참가하지 않았어요';$('participants').textContent='—';$('share').textContent='';if(prev&&uid)try{await remove(ref(db,BASE+'/'+prev+'/presence/'+uid))}catch(e){}}
 async function enter(code){code=code.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);if(!uid){notify('로그인을 확인해 주세요.');return}if(!code){notify('방 코드를 입력해 주세요.');return}if(room===code)return;await leave();const root=BASE+'/'+code;
 try{const snap=await get(ref(db,root+'/meta'));if(!snap.exists())throw Error('존재하지 않는 방입니다.');owner=snap.val().owner;room=code;rememberBoard(code);history.replaceState(null,'',location.pathname+'?room='+encodeURIComponent(code));let name=$('nickname').value.trim().slice(0,24)||'익명 화가';localStorage.setItem('fw-whiteboard-name',name);
 const presence=ref(db,root+'/presence/'+uid);await onDisconnect(presence).remove();await set(presence,{name,joinedAt:serverTimestamp()});
