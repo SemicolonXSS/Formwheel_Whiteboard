@@ -16,17 +16,17 @@
 <button id="create" class="primary">+ 새 방 만들기</button><div class="row"><input id="roomCode" maxlength="8" placeholder="방 코드" style="flex:1;text-transform:uppercase"><button id="join">참가</button></div>
 <div id="roomDisplay">방에 참가하지 않았어요</div><button id="copy" disabled>🔗 초대 링크 복사</button><button id="openTab" disabled>↗ 현재 보드 새 탭으로 열기</button><button id="leave" disabled>방 나가기</button><div id="share"></div></div>
 <div class="status" id="status">연결 준비 중…</div><div><strong>참가자</strong><div id="participants">—</div></div><hr style="border:0;border-top:1px solid var(--border);width:100%">
-<h2>🖌 도구</h2><div class="tools" id="tools"><button data-tool="pen" class="selected">✏️ 펜</button><button data-tool="eraser">🧽 지우개</button><button data-tool="line">📏 직선</button><button data-tool="rect">▭ 사각형</button><button data-tool="ellipse">◯ 타원</button><button data-tool="pick" title="그림에서 색 추출 (I)">💧 색 추출</button></div>
+<h2>🖌 도구</h2><div class="tools" id="tools"><button data-tool="pen" class="selected">✏️ 펜</button><button data-tool="eraser">🧽 지우개</button><button data-tool="line">📏 직선</button><button data-tool="rect">▭ 사각형</button><button data-tool="ellipse">◯ 타원</button><button data-tool="pick" title="그림에서 색 추출 (I)">💧 색 추출</button><button data-tool="arrow">➜ 화살표</button><button data-tool="triangle">△ 삼각형</button><button data-tool="text">T 글자</button></div>
 <label for="brush">🖌️ 브러시 스타일 (16종)</label><select id="brush" aria-label="브러시 스타일" style="width:100%;background:#10172a;border:1px solid #374160;color:#eff2ff;border-radius:9px;padding:9px"><option value="round">기본 펜</option><option value="marker">마커</option><option value="highlighter">형광펜</option><option value="pencil">연필</option><option value="spray">스프레이</option><option value="airbrush">에어브러시</option><option value="chalk">분필</option><option value="crayon">크레용</option><option value="watercolor">수채화</option><option value="calligraphy">캘리그래피</option><option value="pixel">픽셀</option><option value="dots">점선</option><option value="stars">별</option><option value="hearts">하트</option><option value="rainbow">무지개</option><option value="neon">네온</option></select><p class="help">펜 도구에 적용됩니다. 같은 방의 참가자에게도 동일하게 표시돼요.</p><label>색상 <input id="color" type="color" value="#6554df"></label>
 <div id="fwPalette" class="fwPalette" aria-label="빠른 색상 팔레트"></div>
 <div class="row"><button id="fwSaveColor" type="button">＋ 내 색 저장</button><button id="fwResetColors" type="button">↺ 팔레트 초기화</button></div>
 <div class="row"><button id="fwFavoriteBrush" type="button" aria-pressed="false">☆ 이 붓 즐겨찾기</button><button id="fwCycleBrush" type="button">★ 즐겨찾는 붓 전환</button></div><label>굵기 <b id="widthValue">6</b>px</label><input id="width" type="range" min="1" max="50" value="6">
-<label class="toggle"><input id="fill" type="checkbox"> 도형 채우기</label>
+<label class="toggle"><input id="fill" type="checkbox"> 도형 채우기</label><div class="row" role="group" aria-label="빠른 브러시 굵기"><button type="button" data-fw-size="2">2px</button><button type="button" data-fw-size="6">6px</button><button type="button" data-fw-size="14">14px</button><button type="button" data-fw-size="30">30px</button></div><div class="row"><button id="fwRandomColor" type="button">🎲 랜덤 색</button><button id="fwSwapColor" type="button">⇄ 이전 색</button></div>
 <p class="help">왼쪽 사이드바에서 여러 보드를 만들고 클릭해 전환할 수 있어요. Shift+클릭하면 새 탭으로 열립니다. 코드를 아는 친구를 초대할 수도 있어요. 그림은 같은 방의 모든 참가자에게 실시간으로 표시됩니다.</p></aside>
-<main class="panel"><div class="boardTop"><button id="undo" disabled>↶ 내 마지막 그림 취소</button><button id="clear" disabled>🗑 전체 지우기</button><span class="spacer"></span><button id="download">⬇ PNG 저장</button></div>
+<main class="panel"><div class="boardTop"><button id="undo" disabled>↶ 내 마지막 그림 취소</button><button id="clear" disabled>🗑 전체 지우기</button><span class="spacer"></span><button id="download">⬇ PNG 저장</button><button id="fwJpeg" type="button">⬇ JPG 저장</button><button id="fwCopyImage" type="button">📋 그림 복사</button><button id="fwFullScreen" type="button">⛶ 전체화면</button></div>
 <div class="row fwViewControls"><button type="button" id="fwGrid" aria-pressed="false">▦ 격자 켜기</button><label for="fwZoom">🔍 확대 <output id="fwZoomValue">100%</output></label><input id="fwZoom" type="range" min="50" max="200" step="10" value="100"><button id="fwZoomReset" type="button">100%</button></div>
 <div class="boardWrap" id="fwBoardWrap"><div class="fwCanvasFrame" id="fwCanvasFrame"><canvas id="board" width="1200" height="750" aria-label="공동 그림판"></canvas><div id="fwGridOverlay" class="fwGridOverlay" aria-hidden="true"></div></div></div>
-<p class="help">단축키: P 펜 · E 지우개 · L 직선 · R 사각형 · O 타원 · I 색 추출 · G 격자 · [ / ] 굵기 · Ctrl+Z 내 마지막 그림 취소</p>
+<p class="help">단축키: P 펜 · E 지우개 · L 직선 · R 사각형 · O 타원 · A 화살표 · T 글자 · I 색 추출 · G 격자 · [ / ] 굵기 · Ctrl+Z 내 마지막 그림 취소</p>
 <div id="fwViewStatus" class="help" role="status" aria-live="polite">화면 표시 설정은 내 기기에만 적용됩니다.</div><p id="notice" role="status"></p><p class="help">마우스와 터치를 지원합니다. 방 안에서는 모든 사람이 그림을 그리고 지울 수 있어요. 전체 지우기는 방장만 가능합니다. 익명 로그인은 그림 동기화를 위한 인증이며 Firebase 설정에 따라 추가 권한 규칙이 필요합니다.</p></main></div>
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
@@ -80,11 +80,16 @@ function paintAction(a){
    ctx.beginPath();ctx.moveTo(p[0][0],p[0][1]);
    if(p.length===1){ctx.arc(p[0][0],p[0][1],w/2,0,Math.PI*2);ctx.fill()}
    else{for(let i=1;i<p.length;i++)ctx.lineTo(p[i][0],p[i][1]);ctx.stroke()}
+ }else if(a.tool==='text'){
+   const t=typeof a.text==='string'?a.text.slice(0,160):'';
+   if(t){ctx.fillStyle=c;ctx.font=Math.max(14,Math.min(160,w*4))+'px system-ui, sans-serif';ctx.textBaseline='top';ctx.fillText(t,p[0][0],p[0][1],Math.max(30,canvas.width-p[0][0]))}
  }else if(p.length>=2){
    const [x,y]=p[0], [X,Y]=p[1];ctx.beginPath();
    if(a.tool==='line'){ctx.moveTo(x,y);ctx.lineTo(X,Y);ctx.stroke()}
    else if(a.tool==='rect'){a.fill?ctx.fillRect(Math.min(x,X),Math.min(y,Y),Math.abs(X-x),Math.abs(Y-y)):ctx.strokeRect(Math.min(x,X),Math.min(y,Y),Math.abs(X-x),Math.abs(Y-y))}
    else if(a.tool==='ellipse'){ctx.ellipse((x+X)/2,(y+Y)/2,Math.max(.01,Math.abs(X-x)/2),Math.max(.01,Math.abs(Y-y)/2),0,0,Math.PI*2);a.fill?ctx.fill():ctx.stroke()}
+   else if(a.tool==='triangle'){ctx.moveTo((x+X)/2,y);ctx.lineTo(X,Y);ctx.lineTo(x,Y);ctx.closePath();a.fill?ctx.fill():ctx.stroke()}
+   else if(a.tool==='arrow'){const ang=Math.atan2(Y-y,X-x),head=Math.min(35,Math.max(10,w*3)),spread=Math.PI/6;ctx.moveTo(x,y);ctx.lineTo(X,Y);ctx.stroke();ctx.beginPath();ctx.moveTo(X-head*Math.cos(ang-spread),Y-head*Math.sin(ang-spread));ctx.lineTo(X,Y);ctx.lineTo(X-head*Math.cos(ang+spread),Y-head*Math.sin(ang+spread));ctx.stroke()}
  }
  ctx.restore();
 }
@@ -113,7 +118,7 @@ function setTool(next){tool=next;document.querySelectorAll('[data-tool]').forEac
 $('tools').onclick=e=>{const b=e.target.closest('button[data-tool]');if(b)setTool(b.dataset.tool)};
 $('brush').addEventListener('change',()=>{setTool('pen');refreshFavorite()});
 $('width').oninput=()=>{$('widthValue').textContent=$('width').value};
-canvas.onpointerdown=e=>{if(e.button!==0)return;if(tool==='pick'){e.preventDefault();const [x,y]=at(e);const px=ctx.getImageData(Math.min(canvas.width-1,x),Math.min(canvas.height-1,y),1,1).data;$('color').value='#'+Array.from(px.slice(0,3),v=>v.toString(16).padStart(2,'0')).join('');setTool('pen');notify('선택한 색상을 추출했어요.');refreshPalette();return}if(!room||!uid)return;e.preventDefault();drawing=true;points=[at(e)];preview=action(points);canvas.setPointerCapture(e.pointerId);repaint()};
+canvas.onpointerdown=e=>{if(e.button!==0)return;if(tool==='text'){e.preventDefault();if(!room||!uid){notify('글자를 넣으려면 먼저 방에 참가해 주세요.');return}const t=prompt('추가할 글자를 입력하세요 (최대 160자)');if(t===null||!t.trim())return;const a=action([at(e)]);a.text=t.trim().slice(0,160);push(ref(db,BASE+'/'+room+'/actions'),a).catch(err=>notify('글자 동기화 실패: '+err.message));return}if(tool==='pick'){e.preventDefault();const [x,y]=at(e);const px=ctx.getImageData(Math.min(canvas.width-1,x),Math.min(canvas.height-1,y),1,1).data;$('color').value='#'+Array.from(px.slice(0,3),v=>v.toString(16).padStart(2,'0')).join('');setTool('pen');notify('선택한 색상을 추출했어요.');refreshPalette();return}if(!room||!uid)return;e.preventDefault();drawing=true;points=[at(e)];preview=action(points);canvas.setPointerCapture(e.pointerId);repaint()};
 canvas.onpointermove=e=>{if(!drawing)return;e.preventDefault();const p=at(e);if(tool==='pen'||tool==='eraser'){const q=points[points.length-1];if(Math.hypot(p[0]-q[0],p[1]-q[1])>=2&&points.length<1500)points.push(p)}else points=[points[0],p];preview=action(points);repaint()};
 async function finish(e){if(!drawing)return;drawing=false;if(e&&e.type==='pointercancel'){preview=null;repaint();return}const p=at(e);if(tool!=='pen'&&tool!=='eraser')points=[points[0],p];const a=action(points);preview=null;repaint();if(!room)return;try{await push(ref(db,BASE+'/'+room+'/actions'),a)}catch(err){notify('그림 동기화 실패: '+err.message)}}
 canvas.onpointerup=finish;canvas.onpointercancel=finish;
@@ -138,7 +143,16 @@ $('fwGrid').onclick=()=>setGrid(!$('fwCanvasFrame').classList.contains('gridOn')
 function setZoom(value){const n=Math.max(50,Math.min(200,Math.round(value/10)*10));$('fwZoom').value=n;$('fwZoomValue').textContent=n+'%';$('fwCanvasFrame').style.width=n+'%';$('fwCanvasFrame').style.maxWidth='none';setPreference('fw-whiteboard-zoom-v2',n)}
 $('fwZoom').oninput=()=>setZoom(Number($('fwZoom').value));
 $('fwZoomReset').onclick=()=>setZoom(100);
-document.addEventListener('keydown',e=>{if(e.altKey||e.isComposing||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){if(room&&!$('undo').disabled){e.preventDefault();$('undo').click()}return}if(e.ctrlKey||e.metaKey||e.repeat)return;const map={p:'pen',e:'eraser',l:'line',r:'rect',o:'ellipse',i:'pick'};const k=e.key.toLowerCase();if(map[k]){setTool(map[k]);return}if(k==='g'){$('fwGrid').click();return}if(e.key==='['||e.key===']'){e.preventDefault();$('width').value=Math.max(1,Math.min(50,Number($('width').value)+(e.key==='['?-1:1)));$('width').dispatchEvent(new Event('input'))}});
+document.addEventListener('keydown',e=>{if(e.altKey||e.isComposing||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){if(room&&!$('undo').disabled){e.preventDefault();$('undo').click()}return}if(e.ctrlKey||e.metaKey||e.repeat)return;const map={p:'pen',e:'eraser',l:'line',r:'rect',o:'ellipse',i:'pick',a:'arrow',t:'text'};const k=e.key.toLowerCase();if(map[k]){setTool(map[k]);return}if(k==='g'){$('fwGrid').click();return}if(e.key==='['||e.key===']'){e.preventDefault();$('width').value=Math.max(1,Math.min(50,Number($('width').value)+(e.key==='['?-1:1)));$('width').dispatchEvent(new Event('input'))}});
+// Quick controls store only local preferences, never edit room data.
+let lastChosenColor=$('color').value;
+$('color').addEventListener('change',e=>{if(e.target.value!==lastChosenColor){const old=lastChosenColor;lastChosenColor=e.target.value;$('fwSwapColor').dataset.previous=old}});
+$('fwRandomColor').onclick=()=>{const old=$('color').value;const bytes=crypto.getRandomValues(new Uint8Array(3));$('color').value='#'+Array.from(bytes,v=>v.toString(16).padStart(2,'0')).join('');$('fwSwapColor').dataset.previous=old;refreshPalette()};
+$('fwSwapColor').onclick=()=>{const prev=$('fwSwapColor').dataset.previous;if(!prev)return;const current=$('color').value;$('color').value=prev;$('fwSwapColor').dataset.previous=current;refreshPalette()};
+document.querySelectorAll('[data-fw-size]').forEach(b=>b.onclick=()=>{$('width').value=b.dataset.fwSize;$('width').dispatchEvent(new Event('input'))});
+$('fwJpeg').onclick=()=>{const a=document.createElement('a');a.href=canvas.toDataURL('image/jpeg',.94);a.download='formwheel-whiteboard-'+(room||'drawing')+'.jpg';a.click()};
+$('fwCopyImage').onclick=async()=>{try{if(!navigator.clipboard?.write||typeof ClipboardItem==='undefined')throw Error('이 브라우저에서 이미지 복사를 지원하지 않아요.');const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('이미지를 생성할 수 없습니다.');await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);notify('그림 이미지를 클립보드에 복사했어요.')}catch(e){notify('그림 복사 실패: '+e.message+' PNG 저장을 이용해 주세요.')}};
+$('fwFullScreen').onclick=async()=>{try{const target=$('fwBoardWrap');if(document.fullscreenElement)await document.exitFullscreen();else if(target.requestFullscreen)await target.requestFullscreen();else notify('전체화면을 지원하지 않는 브라우저입니다.')}catch(e){notify('전체화면 전환 실패: '+e.message)}};
 refreshPalette();refreshFavorite();setGrid(readPreference('fw-whiteboard-grid-v2',false)===true);setZoom(Number(readPreference('fw-whiteboard-zoom-v2',100))||100);
 $('nickname').value=localStorage.getItem('fw-whiteboard-name')||'';
 onAuthStateChanged(auth,u=>{uid=u?.uid||null;if(uid){$('status').textContent='🟢 연결 준비 완료';const code=new URLSearchParams(location.search).get('room');if(!room&&(code||savedBoards[0]))enter(code||savedBoards[0])}else{$('status').textContent='로그인 필요'}});
